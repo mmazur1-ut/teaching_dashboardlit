@@ -162,4 +162,24 @@ with tab5:
             template="plotly_white",
             showlegend=False
         )
-        st.plotly_char
+        st.plotly_chart(pval_fig, use_container_width=True)
+
+    st.markdown("---")
+    st.subheader("📌 How to Interpret This:")
+    st.markdown("""
+    - A p-value this small means there is **strong evidence** that not all teaching styles are equally effective.
+    - **Some methods consistently lead to better student scores**.
+    - This can inform policy or instructional design decisions.
+    """)
+
+    st.subheader("MANOVA Summary")
+    st.markdown("""
+    - **H₀**: All teaching styles produce the same outcomes.
+    - **H₁**: At least one teaching style is significantly different.
+    - **Result**: P = 2.2e-16 → **Reject H₀**. Teaching styles differ significantly.
+    """)
+
+# Tab 6 - Descriptive Statistics Table
+with tab6:
+    st.header("Full Descriptive Statistics Table")
+    st.dataframe(descriptive_stats.round(2), use_container_width=True)
