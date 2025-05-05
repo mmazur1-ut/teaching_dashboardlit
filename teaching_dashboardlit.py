@@ -6,21 +6,21 @@ import plotly.graph_objects as go
 
 # Making it pretty
 subject_colors = {
-    'EnglishScore': '#EF553B',
-    'MathScore': '#636EFA',
-    'ChemistryScore': '#00CC96',
-    'PhysicsScore': '#AB63FA',
-    'BiologyScore': '#FFA15A'
+    'EnglishScore': '#ffdd8e',
+    'MathScore': '#f0bfe1',
+    'ChemistryScore': '#77c7d8',
+    'PhysicsScore': '#be90cf',
+    'BiologyScore': '#77d883'
 }
 
 teaching_method_colors = {
-    'Lecture-Based Instruction': '#636EFA',
-    'Facilitator': '#EF553B',
-    'Technology Based Learning': '#00CC96',
-    'Group Learning': '#AB63FA',
-    'Individual Learning': '#FFA15A',
-    'Inquiry-Based Learning': '#19D3F3',
-    'Differentiated Instruction': '#FF6692'
+    'Lecture-Based Instruction': '#dd9bc9',
+    'Facilitator': '#bbffee',
+    'Technology Based Learning': '#5b5dff',
+    'Group Learning': '#88c081',
+    'Individual Learning': '#fddab1',
+    'Inquiry-Based Learning': '#fdb1da',
+    'Differentiated Instruction': '#d84242'
 }
 
 # Load data
