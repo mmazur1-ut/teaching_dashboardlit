@@ -5,7 +5,8 @@ import plotly.express as px
 import plotly.graph_objects as go
 
 # Load data
-df = pd.read_excel("teaching_datacopy.xlsx", sheet_name='Sheet1')
+df = pd.read_excel("teaching_data.xlsx", sheet_name='Sheet1')
+
 
 # Melted data for analysis
 df_melted = df.melt(id_vars=['StudentID', 'TeachingMethod'],
