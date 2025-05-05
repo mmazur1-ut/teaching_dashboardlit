@@ -4,6 +4,25 @@ import numpy as np
 import plotly.express as px
 import plotly.graph_objects as go
 
+# Making it pretty
+subject_colors = {
+    'EnglishScore': '#EF553B',
+    'MathScore': '#636EFA',
+    'ChemistryScore': '#00CC96',
+    'PhysicsScore': '#AB63FA',
+    'BiologyScore': '#FFA15A'
+}
+
+teaching_method_colors = {
+    'Lecture-Based Instruction': '#636EFA',
+    'Facilitator': '#EF553B',
+    'Technology Based Learning': '#00CC96',
+    'Group Learning': '#AB63FA',
+    'Individual Learning': '#FFA15A',
+    'Inquiry-Based Learning': '#19D3F3',
+    'Differentiated Instruction': '#FF6692'
+}
+
 # Load data
 df = pd.read_excel("teaching_data.xlsx", sheet_name='Sheet1')
 
@@ -47,11 +66,12 @@ with tab1:
         sub_data = descriptive_stats[descriptive_stats['Subject'] == subject]
         fig = go.Figure()
         fig.add_trace(go.Bar(
-            x=sub_data['TeachingMethod'],
-            y=sub_data['Mean'],
-            error_y=dict(type='data', array=sub_data['CI'], visible=True),
-            name=subject
-        ))
+    x=sub_data['TeachingMethod'],
+    y=sub_data['Mean'],
+    error_y=dict(type='data', array=sub_data['CI'], visible=True),
+    name=subject,
+    marker_color=subject_colors.get(subject, '#CCCCCC')  # Adds subject-specific color
+))
         fig.update_layout(
             title=f"{subject} - Mean Score with 95% Confidence Interval",
             xaxis_title="Teaching Method",
@@ -64,24 +84,53 @@ with tab1:
 with tab2:
     st.header("Top Performing Teaching Methods by Subject")
     top_methods = descriptive_stats.loc[descriptive_stats.groupby('Subject')['Mean'].idxmax()]
-    fig = px.bar(top_methods, x='Subject', y='Mean', color='TeachingMethod',
-                 title='Top Performing Teaching Method per Subject', template='plotly_dark')
+
+    fig = px.bar(
+        top_methods,
+        x='Subject',
+        y='Mean',
+        color='TeachingMethod',
+        title='Top Performing Teaching Method per Subject',
+        template='plotly_dark',
+        color_discrete_map=teaching_method_colors
+    )
+
     st.plotly_chart(fig, use_container_width=True)
+
 
 # Tab 3 - Overall Method Comparison
 with tab3:
     st.header("Overall Average Score by Teaching Method")
     overall_means = df_melted.groupby('TeachingMethod')['Score'].mean().reset_index()
-    fig = px.bar(overall_means, x='TeachingMethod', y='Score',
-                 title='Overall Average Score by Teaching Method', template='plotly_dark')
+
+    fig = px.bar(
+        overall_means,
+        x='TeachingMethod',
+        y='Score',
+        title='Overall Average Score by Teaching Method',
+        template='plotly_dark',
+        color='TeachingMethod',
+        color_discrete_map=teaching_method_colors
+    )
+
     st.plotly_chart(fig, use_container_width=True)
+
 
 # Tab 4 - Mean Scores Comparison
 with tab4:
     st.header("Mean Scores by Subject and Method")
-    fig = px.bar(descriptive_stats, x='Subject', y='Mean', color='TeachingMethod',
-                 barmode='group', title='Mean Score Comparison by Subject and Method', template='plotly_dark')
+    fig = px.bar(
+        descriptive_stats,
+        x='Subject',
+        y='Mean',
+        color='TeachingMethod',
+        barmode='group',
+        title='Mean Score Comparison by Subject and Method',
+        template='plotly_dark',
+        color_discrete_map=teaching_method_colors
+    )
     st.plotly_chart(fig, use_container_width=True)
+
 
 # Tab 5 - Summary and P-value Visual
 with tab5:
@@ -113,24 +162,4 @@ with tab5:
             template="plotly_white",
             showlegend=False
         )
-        st.plotly_chart(pval_fig, use_container_width=True)
-
-    st.markdown("---")
-    st.subheader("📌 How to Interpret This:")
-    st.markdown("""
-    - A p-value this small means there is **strong evidence** that not all teaching styles are equally effective.
-    - **Some methods consistently lead to better student scores**.
-    - This can inform policy or instructional design decisions.
-    """)
-
-    st.subheader("MANOVA Summary")
-    st.markdown("""
-    - **H₀**: All teaching styles produce the same outcomes.
-    - **H₁**: At least one teaching style is significantly different.
-    - **Result**: P = 2.2e-16 → **Reject H₀**. Teaching styles differ significantly.
-    """)
-
-# Tab 6 - Descriptive Statistics Table
-with tab6:
-    st.header("Full Descriptive Statistics Table")
-    st.dataframe(descriptive_stats.round(2), use_container_width=True)
+        st.plotly_char
