@@ -4,25 +4,25 @@ import numpy as np
 import plotly.express as px
 import plotly.graph_objects as go
 
-# -------------------- CONFIG & COLOR THEMES --------------------
+# -------------------- CONFIG & ACADEMIA + NATURE AESTHETICS --------------------
 st.set_page_config(layout="wide", page_title="Teaching Methods Dashboard")
 
 subject_colors = {
-    'EnglishScore': '#8FB9A8',  # Sage green
-    'MathScore': '#4D77FF',     # Soft blue
-    'ChemistryScore': '#6AD1E3',
-    'PhysicsScore': '#be90cf',
-    'BiologyScore': '#64d488'
+    'EnglishScore': '#A3C4BC',   # eucalyptus sage
+    'MathScore': '#6B9080',      # pine green
+    'ChemistryScore': '#CCE3DC', # seafoam mist
+    'PhysicsScore': '#D5C6E0',   # lilac fog
+    'BiologyScore': '#A4C3B2'    # leafy green
 }
 
 teaching_method_colors = {
-    'Lecture-Based Instruction': '#5B6C8F',
-    'Facilitator': '#84DCC6',
-    'Technology Based Learning': '#3B8EA5',
-    'Group Learning': '#88c081',
-    'Individual Learning': '#A6E3E9',
-    'Inquiry-Based Learning': '#68A691',
-    'Differentiated Instruction': '#D76A8A'
+    'Lecture-Based Instruction': '#7E8D85',     # mossy grey
+    'Facilitator': '#C1DADB',                  # blue mist
+    'Technology Based Learning': '#87BBA2',    # modern forest green
+    'Group Learning': '#BFD8B8',               # soft fern
+    'Individual Learning': '#E4EFE7',          # off-white mint
+    'Inquiry-Based Learning': '#96C9DC',       # glacial blue
+    'Differentiated Instruction': '#A69CAC'    # soft mauve
 }
 
 # -------------------- DATA LOADING & CLEANING --------------------
@@ -47,20 +47,21 @@ descriptive_stats = df_melted.groupby(['TeachingMethod', 'Subject']).agg(
 descriptive_stats['CI'] = 1.96 * (descriptive_stats['StdDev'] / np.sqrt(descriptive_stats['Count']))
 
 # -------------------- UI HEADER --------------------
-st.markdown("# 🧑‍🏫 Teaching Method Effectiveness Dashboard")
-st.markdown("#### *ESM 250 – Final Project*")
+st.markdown("# 🎓 *Teaching Method Effectiveness Dashboard*")
+st.markdown("#### *An ESM 250 Final Project on Evidence-Based Pedagogy*")
+st.markdown("##### _Where educational theory meets statistical insight_")
 st.markdown("---")
 
 # -------------------- TABS --------------------
 tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
-    "🎯 Mean ± 95% CI", "🥇 Top Methods", "📈 Overall Comparison",
-    "📚 Subject vs. Method", "📊 Summary & Stats", "📋 Full Table"
+    "🎯 CI Plots", "🥇 Top Methods", "📈 Overall Comparison",
+    "📚 Subject Breakdown", "📊 MANOVA & Stats", "📋 Raw Summary Table"
 ])
 
 # -------------------- TAB 1 --------------------
 with tab1:
-    st.markdown("### 🎯 Mean Scores ± 95% Confidence Intervals")
-    st.caption("Each bar shows the average score for students under each teaching method, with error bars representing the 95% confidence interval. This helps estimate the reliability of the observed mean.")
+    st.markdown("### 🎯 Confidence Intervals: Mean Scores by Method")
+    st.caption("Each bar shows the average student score for a given subject and teaching method, including a 95% confidence interval. This visual helps evaluate the precision of the estimates across approaches.")
     for subject in df_melted['Subject'].unique():
         sub_data = descriptive_stats[descriptive_stats['Subject'] == subject]
         fig = go.Figure()
@@ -72,7 +73,7 @@ with tab1:
             marker_color=subject_colors.get(subject + 'Score', '#CCCCCC')
         ))
         fig.update_layout(
-            title=f"{subject} – Mean Score with 95% Confidence Interval",
+            title=f"{subject} – Mean Score with 95% CI",
             xaxis_title="Teaching Method",
             yaxis_title="Mean Score",
             template="plotly_dark",
@@ -82,40 +83,40 @@ with tab1:
 
 # -------------------- TAB 2 --------------------
 with tab2:
-    st.markdown("### 🥇 Top Performing Methods by Subject")
-    st.caption("This highlights the highest-scoring teaching method for each subject. Use it to quickly identify subject-specific strengths across teaching styles.")
+    st.markdown("### 🥇 Top Performing Teaching Methods")
+    st.caption("For each subject, the teaching method that yielded the highest average score is shown. This offers a subject-specific view into which instructional style works best.")
     top_methods = descriptive_stats.loc[descriptive_stats.groupby('Subject')['Mean'].idxmax()]
     fig = px.bar(top_methods, x='Subject', y='Mean', color='TeachingMethod',
-                 title='Top Performing Teaching Method per Subject',
-                 template='plotly_dark', color_discrete_map=teaching_method_colors)
+                 title='Best Method by Subject', template='plotly_dark',
+                 color_discrete_map=teaching_method_colors)
     st.plotly_chart(fig, use_container_width=True)
 
 # -------------------- TAB 3 --------------------
 with tab3:
-    st.markdown("### 📈 Overall Average Score by Method")
-    st.caption("Here we average scores across all subjects for each method. It offers a big-picture view of which strategies generally yield the best results.")
+    st.markdown("### 📈 Overall Teaching Method Comparison")
+    st.caption("This chart averages student scores across all subjects for each method — giving a high-level perspective on overall performance.")
     overall_means = df_melted.groupby('TeachingMethod')['Score'].mean().reset_index()
     fig = px.bar(overall_means, x='TeachingMethod', y='Score',
-                 title='Overall Average Score by Teaching Method',
+                 title='Average Score by Teaching Method',
                  template='plotly_dark', color='TeachingMethod',
                  color_discrete_map=teaching_method_colors)
     st.plotly_chart(fig, use_container_width=True)
 
 # -------------------- TAB 4 --------------------
 with tab4:
-    st.markdown("### 📚 Mean Scores by Subject and Method")
-    st.caption("This grouped bar chart lets you compare how different teaching methods performed across all subjects side by side.")
+    st.markdown("### 📚 Score Breakdown by Subject and Method")
+    st.caption("A grouped bar chart showing how each teaching method performed across different subjects. Useful for comparing instructional style performance side by side.")
     fig = px.bar(descriptive_stats, x='Subject', y='Mean', color='TeachingMethod',
-                 barmode='group', title='Mean Score Comparison by Subject and Method',
+                 barmode='group', title='Method Comparison per Subject',
                  template='plotly_dark', color_discrete_map=teaching_method_colors)
     st.plotly_chart(fig, use_container_width=True)
 
 # -------------------- TAB 5 --------------------
 with tab5:
-    st.markdown("### 📊 Statistical Summary and Interpretation")
+    st.markdown("### 📊 MANOVA Results & Statistical Summary")
     col1, col2 = st.columns([1, 1])
     with col1:
-        st.success("Teaching methods have a statistically significant impact on student performance.")
+        st.success("The MANOVA test reveals a statistically significant effect of teaching method on student scores.")
         st.markdown("**P-value = 2.2e-16**")
     with col2:
         pval_fig = go.Figure()
@@ -134,19 +135,19 @@ with tab5:
         st.plotly_chart(pval_fig, use_container_width=True)
     st.markdown("---")
     st.markdown("""
-    **📌 How to Interpret This:**
-    - A p-value this small means there is **strong evidence** that not all teaching styles are equally effective.
-    - **Some methods consistently lead to better student scores**.
-    - This can inform policy or instructional design decisions.
+    **🏛️ Interpretation:**
+    - The extremely low p-value indicates **strong statistical evidence** that teaching methods influence student outcomes.
+    - **Different methods yield measurably different performance**.
+    - These results can support curriculum decisions or teaching training models.
 
-    **MANOVA Summary**
-    - **H₀**: All teaching styles produce the same outcomes.
-    - **H₁**: At least one teaching style is significantly different.
-    - **Result**: P = 2.2e-16 → **Reject H₀**. Teaching styles differ significantly.
+    **MANOVA Framework**
+    - **H₀**: Teaching styles have no effect on performance.
+    - **H₁**: At least one style significantly differs.
+    - **Conclusion**: Reject H₀. Teaching method matters.
     """)
 
 # -------------------- TAB 6 --------------------
 with tab6:
     st.markdown("### 📋 Full Descriptive Statistics Table")
-    st.caption("A full breakdown of central tendency and variability for each subject-method combo. Useful for deeper statistical insight or custom comparisons.")
+    st.caption("A raw table of statistical summaries including mean, median, standard deviation, and more — organized by subject and method.")
     st.dataframe(descriptive_stats.round(2), use_container_width=True)
